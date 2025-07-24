@@ -1,51 +1,76 @@
 let cart = [];
 
-function filterProducts(category) {
-  const list = document.getElementById("product-list");
-  list.innerHTML = "";
-  const filtered = category === "all" ? products : products.filter(p => p.category === category);
-  filtered.forEach(p => {
-    const discount = Math.round(((p.original - p.price) / p.original) * 100);
-    const el = document.createElement("div");
-    el.className = "product-card";
-    el.innerHTML = `
-      <img src="\${p.image}" alt="\${p.name}">
-      <h3>\${p.name}</h3>
-      <p><span class="original-price">₹\${p.original}</span> <span class="discounted-price">₹\${p.price}</span></p>
-      <p class="discount-tag">Save \${discount}%</p>
-      <button onclick='addToCart("\${p.name}", \${p.price})'>Add to Cart</button>
+function renderProducts(productList) {
+  const container = document.getElementById("product-list");
+  container.innerHTML = "";
+  productList.forEach(product => {
+    const discount = Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100);
+    container.innerHTML += `
+      <div class="product-card">
+        <img src="${product.image}" alt="${product.name}">
+        <h3>${product.name}</h3>
+        <p>
+          <span class="original-price">₹${product.originalPrice}</span>
+          <span class="discounted-price">₹${product.price}</span>
+          <span class="discount-percent">(${discount}% OFF)</span>
+        </p>
+        <button onclick="addToCart(${product.id})">Add to Cart</button>
+      </div>
     `;
-    list.appendChild(el);
   });
 }
 
-function addToCart(name, price) {
-  cart.push({ name, price });
-  displayCart();
+function filterProducts(category) {
+  if (category === "all") {
+    renderProducts(products);
+  } else {
+    renderProducts(products.filter(p => p.category === category));
+  }
 }
 
-function displayCart() {
-  const items = document.getElementById("cart-items");
+function addToCart(id) {
+  const product = products.find(p => p.id === id);
+  cart.push(product);
+  updateCart();
+}
+
+function updateCart() {
+  const cartItems = document.getElementById("cart-items");
   const summary = document.getElementById("cart-summary");
-  items.innerHTML = "";
+  cartItems.innerHTML = "";
   let total = 0;
+
   cart.forEach(item => {
     total += item.price;
-    const li = document.createElement("li");
-    li.textContent = `\${item.name} - ₹\${item.price}`;
-    items.appendChild(li);
+    cartItems.innerHTML += `<li>${item.name} - ₹${item.price}</li>`;
   });
 
-  let offer = "";
+  // Offer logic
+  let offerText = "";
   if (total > 499) {
-    offer = "🎁 Offer Applied: Free keychain!";
+    offerText = "🎁 Free keychain added!";
   }
 
-  summary.innerHTML = `
-    <p><strong>Total:</strong> ₹\${total}</p>
-    <p>\${offer}</p>
-    <a href="https://wa.me/919999999999?text=I want to order items worth ₹\${total}">Order on WhatsApp</a>
-  `;
+  summary.innerHTML = `<strong>Total:</strong> ₹${total} ${offerText}`;
 }
 
-window.onload = () => filterProducts("all");
+function orderNow() {
+  if (cart.length === 0) {
+    alert("Cart is empty!");
+    return;
+  }
+
+  let message = "Hello! I would like to order the following items:\n";
+  cart.forEach(item => {
+    message += `- ${item.name}: ₹${item.price}\n`;
+  });
+
+  let total = cart.reduce((sum, item) => sum + item.price, 0);
+  message += `\nTotal: ₹${total}`;
+
+  const encodedMsg = encodeURIComponent(message);
+  window.open(`https://wa.me/919999999999?text=${encodedMsg}`, "_blank");
+}
+
+// Initial load
+renderProducts(products);
