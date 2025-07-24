@@ -8,28 +8,31 @@
 </head>
 <body>
   <header>
-    <img src="logo.png" alt="Logo">
+    <img src="logo.png" alt="Logo" />
     <nav>
       <a href="index.html">Home</a>
       <a href="about.html">About Us</a>
-      <a href="contact.html">Contact</a>
+      <a href="contact.html">Contact Us</a>
     </nav>
   </header>
 
-  <marquee>🎁 Offer 1: Free keychain on purchase above ₹499 | 🎁 Offer 2: 10% off on Resin Art sets | 🎁 Offer 3: Buy 2 candles get 1 free!</marquee>
+  <marquee behavior="scroll" direction="left">
+    🛍️ Offer 1: Free keychain on orders above ₹499 | Offer 2: Buy 2 candles get 1 free | Offer 3: Flat 10% off on Resin Art Frames!
+  </marquee>
 
   <section id="filters">
     <button onclick="filterProducts('all')">All</button>
-    <button onclick="filterProducts('Resin Art')">Resin Art</button>
-    <button onclick="filterProducts('Decorative Candles')">Decorative Candles</button>
+    <button onclick="filterProducts('resin')">Resin Art</button>
+    <button onclick="filterProducts('candle')">Candles</button>
   </section>
 
   <section id="product-list"></section>
 
   <section id="cart">
-    <h2>Cart</h2>
+    <h3>Cart</h3>
     <ul id="cart-items"></ul>
     <div id="cart-summary"></div>
+    <button onclick="orderNow()">Order on WhatsApp</button>
   </section>
 
   <script src="products.js"></script>
